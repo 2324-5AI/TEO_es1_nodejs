@@ -26,27 +26,23 @@ var server = http.createServer(function(richiesta, risposta){
         pathname: ${infoUrl.pathname}
         parametri: ${infoUrl.search}
     `;
-    //Estraggo i parametri
-    let parametri = infoUrl.query;
-    testoRisposta += `
-        action: ${parametri.action}
-        p1: ${parametri.p1}
-    `;
+   
+    //SMISTO LE RICHIESTE: In base a quello che viene richiesto dal client richiamo la funzione corretta
+    let header;
+    switch(infoUrl.pathname){
+        case "richiesta":
+            stampaRichiesta(testoRisposta, infoUrl, risposta);
+            break;
 
-    /************************RISPOSTA *********************/
-    /*
-        INTESTAZIONE DELLA RISPOSTA
-        1* parametro -> numero -> codice di risposta -> 200/404/...
-        2* parametro -> oggetto JSON -> insieme di optioni che vogliamo inserire nell'intestazione
-    */
-    let header = {"Content-Type":"text/plain"};
-    risposta.writeHead(200, header);
-
-    //Modificare il contenuto del pacchetto (Posso richiamare write anche più di una volta)
-    risposta.write("Hello world! " + testoRisposta);
-
-    //Informo il server che ho terminato di preparare il pacchetto di risposta
-    risposta.end();
+        case "index":
+            break;
+        
+        default:
+            header = {"Content-Type":"text/plain"};
+            risposta.writeHead(404, header);
+            risposta.write("Nessuna risorsa è stata trovata!");
+            risposta.end();
+    }
 });
 
 /*
@@ -54,3 +50,31 @@ var server = http.createServer(function(richiesta, risposta){
 */
 server.listen(1337);
 console.log("Il server è stato avviato sulla porta 1337");
+
+
+
+function stampaRichiesta(testoRisposta, infoUrl, risposta){
+     //Estraggo i parametri
+     let parametri = infoUrl.query;
+     testoRisposta += `
+         action: ${parametri.action}
+         p1: ${parametri.p1}
+     `;
+ 
+     /************************RISPOSTA *********************/
+     /*
+         INTESTAZIONE DELLA RISPOSTA
+         1* parametro -> numero -> codice di risposta -> 200/404/...
+         2* parametro -> oggetto JSON -> insieme di optioni che vogliamo inserire nell'intestazione
+ 
+         Content-Type: text/plain , text/html , application/json
+     */
+     let header = {"Content-Type":"text/plain"};
+     risposta.writeHead(200, header);
+ 
+     //Modificare il contenuto del pacchetto (Posso richiamare write anche più di una volta)
+     risposta.write("Hello world! " + testoRisposta);
+ 
+     //Informo il server che ho terminato di preparare il pacchetto di risposta
+     risposta.end();
+}
