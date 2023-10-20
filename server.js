@@ -29,12 +29,13 @@ var server = http.createServer(function(richiesta, risposta){
    
     //SMISTO LE RICHIESTE: In base a quello che viene richiesto dal client richiamo la funzione corretta
     let header;
+    console.log(infoUrl.pathname);
     switch(infoUrl.pathname){
-        case "richiesta":
+        case "/richiesta":
             stampaRichiesta(testoRisposta, infoUrl, risposta);
             break;
 
-        case "index":
+        case "/index":
             break;
         
         default:
